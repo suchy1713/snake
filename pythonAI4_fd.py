@@ -65,13 +65,13 @@ distance_var = 0
 
 # ai - modifiable
 reward_apple = 1
-reward_death = -1.3
+reward_death = -1.2
 reward_closer = 0.5
 reward_further = -0.8
 gamma = 0.9
-learning_rate = 0.1
+learning_rate = 0.001
 temperature = 10
-hidden_layer_size = 5
+hidden_layer_size = 20
 memory_capacity = 100000
 batch_size = 100
 
@@ -371,17 +371,47 @@ def game():
             set_sensors([head_var[0]-1, head_var[1]], [head_var[0], head_var[1]-1], [head_var[0], head_var[1]+1])
 
 
-        is_food = [0, 0, 0]
+        is_food = [1, 1, 1]
 
+        if direction == Direction.UP:
+            if head_var[0] == apple_var[0] and head_var[1] > apple_var[1]:
+                is_food[up] = distance(apple_var, head_var)/max(fields_x, fields_y)
 
-        if sensor1[0] == apple['x'] and sensor1[1] == apple['y']:
-            is_food[up] = 1
+            elif head_var[1] == apple_var[1] and head_var[0] > apple_var[0]:
+                is_food[left] = distance(apple_var, head_var)/max(fields_x, fields_y)
 
-        if sensor2[0] == apple['x'] and sensor2[1] == apple['y']:
-            is_food[left] = 1
+            elif head_var[1] == apple_var[1] and head_var[0] < apple_var[0]:
+                is_food[right] = distance(apple_var, head_var)/max(fields_x, fields_y)
 
-        if sensor3[0] == apple['x'] and sensor3[1] == apple['y']:
-            is_food[right] = 1
+        elif direction == Direction.RIGHT:
+            if head_var[0] < apple_var[0] and head_var[1] == apple_var[1]:
+                is_food[up] = distance(apple_var, head_var)/max(fields_x, fields_y)
+
+            elif head_var[1] > apple_var[1] and head_var[0] == apple_var[0]:
+                is_food[left] = distance(apple_var, head_var)/max(fields_x, fields_y)
+
+            elif head_var[1] < apple_var[1] and head_var[0] == apple_var[0]:
+                is_food[right] = distance(apple_var, head_var)/max(fields_x, fields_y)
+
+        elif direction == Direction.DOWN:
+            if head_var[0] == apple_var[0] and head_var[1] < apple_var[1]:
+                is_food[up] = distance(apple_var, head_var)/max(fields_x, fields_y)
+
+            elif head_var[1] == apple_var[1] and head_var[0] < apple_var[0]:
+                is_food[left] = distance(apple_var, head_var)/max(fields_x, fields_y)
+
+            elif head_var[1] == apple_var[1] and head_var[0] > apple_var[0]:
+                is_food[right] = distance(apple_var, head_var)/max(fields_x, fields_y)
+
+        elif direction == Direction.LEFT:
+            if head_var[0] > apple_var[0] and head_var[1] == apple_var[1]:
+                is_food[up] = distance(apple_var, head_var)/max(fields_x, fields_y)
+
+            elif head_var[1] < apple_var[1] and head_var[0] == apple_var[0]:
+                is_food[left] = distance(apple_var, head_var)/max(fields_x, fields_y)
+
+            elif head_var[1] > apple_var[1] and head_var[0] == apple_var[0]:
+                is_food[right] = distance(apple_var, head_var)/max(fields_x, fields_y)
 
 
 
@@ -464,6 +494,7 @@ def game():
         if python_xy[head]['x'] == apple['x'] and python_xy[head]['y'] == apple['y']:
             reward = reward_apple
             distance_var = 0
+            is_food = [0, 0, 0]
             apple = apple_rand()
 
         else:

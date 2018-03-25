@@ -52,16 +52,17 @@ class ReplayMemory(object):
 
 class Brain():
 
-    def __init__(self, input_size, hl_size, nb_action, temperature, gamma):
+    def __init__(self, input_size, hl_size, nb_action, temperature, gamma, learning_rate, memory_capacity, batch_size):
         self.gamma = gamma
         self.model = Network(input_size, hl_size, nb_action)
-        self.memory = ReplayMemory(100000)
+        self.memory = ReplayMemory(memory_capacity)
         self.reward_window = []
-        self.optimizer = optim.Adam(self.model.parameters(), lr = 0.001)
+        self.optimizer = optim.Adam(self.model.parameters(), lr = learning_rate)
         self.last_state = torch.Tensor(input_size).unsqueeze(0)
         self.last_reward = 0
         self.last_action = 0
         self.temperature = temperature
+        self.batch_size = batch_size
 
 
     def select_action(self, state):
@@ -85,8 +86,8 @@ class Brain():
         self.memory.push((self.last_state, new_state, torch.LongTensor([int(self.last_action)]), torch.Tensor([self.last_reward])))
         action = self.select_action(new_state)
 
-        if len(self.memory.memory) > 100:
-            batch_state, batch_next_state, batch_action, batch_reward = self.memory.sample(100)
+        if len(self.memory.memory) > self.batch_size:
+            batch_state, batch_next_state, batch_action, batch_reward = self.memory.sample(self.batch_size)
             self.learn(batch_state, batch_next_state, batch_reward, batch_action)
 
         self.last_action = action

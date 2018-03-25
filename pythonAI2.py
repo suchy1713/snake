@@ -352,7 +352,7 @@ def game():
 ###############################################################################
 
         if python_xy[head]['x'] == 1 or python_xy[head]['x'] == fields_x-2 or python_xy[head]['y'] == 1 or python_xy[head]['y'] == fields_y-2:
-            reward = -1
+            reward = -0.5
             print("STATE:", iterator)
             print("head = ", head_var)
             print("apple = ", apple_var)
@@ -373,7 +373,7 @@ def game():
         
         for python_body in python_xy[1:]:
             if python_body['x'] == python_xy[head]['x'] and python_body['y'] == python_xy[head]['y']:
-                reward = -1
+                reward = -0.5
                 print("STATE:", iterator)
                 print("head = ", head_var)
                 print("apple = ", apple_var)
@@ -467,7 +467,7 @@ def game():
         #print(distance(head_var, apple_var))      
 
         if python_xy[head]['x'] == apple['x'] and python_xy[head]['y'] == apple['y']:
-            #reward = 1
+            reward = 1.5
             apple = apple_rand()
 
         else:
